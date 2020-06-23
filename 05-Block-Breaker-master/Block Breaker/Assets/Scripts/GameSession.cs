@@ -6,13 +6,16 @@ using TMPro;
 public class GameSession : MonoBehaviour {
 
     // config params
-    [Range(0.1f, 10f)] [SerializeField] float gameSpeed = 1f;
+    float gameSpeed = 0.5f;
     [SerializeField] int pointsPerBlockDestroyed = 83;
     [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] bool isAutoPlayEnabled;
 
+
     // state variables
     [SerializeField] int currentScore = 0;
+
+    int numLevel = 0;
 
     private void Awake()
     {
@@ -30,24 +33,38 @@ public class GameSession : MonoBehaviour {
 
     private void Start()
     {
-        scoreText.text = currentScore.ToString();    
+        if (PlayerPrefs.GetInt("Score") != null)
+        {
+            //Debug.Log(currentScore);
+            currentScore = PlayerPrefs.GetInt("Score");
+            scoreText.text = PlayerPrefs.GetInt("Score").ToString();   
+        }else{
+            scoreText.text = currentScore.ToString(); 
+        }
+        //Debug.Log(PlayerPrefs.GetInt("num_Level"));
     }
 
     // Update is called once per frame
     void Update () {
-        Time.timeScale = gameSpeed;
+        if (PlayerPrefs.GetInt("NumLevel") != null)
+        {
+         numLevel = PlayerPrefs.GetInt("NumLevel");   
+        }
+        numLevel = numLevel /10;
+        Time.timeScale = gameSpeed+numLevel;
 	}
 
     public void AddToScore()
     {
         currentScore += pointsPerBlockDestroyed;
         scoreText.text = currentScore.ToString();
+        PlayerPrefs.SetInt("Score",currentScore);
     }
 
-    public void ResetGame()
+    /*public void ResetGame()
     {
         Destroy(gameObject);
-    }
+    }*/
     public bool IsAutoPlayEnabled()
     {
         return isAutoPlayEnabled;
